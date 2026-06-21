@@ -1,0 +1,2 @@
+0 mapa
+1 fondo

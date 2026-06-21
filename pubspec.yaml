@@ -40,7 +40,11 @@ dependencies:
   vector_math: ^2.1.4
   permission_handler: ^11.3.0
   mobile_scanner: ^5.1.1
+  tflite_v2: ^1.0.0 # Motor de IA súper ligero
   google_fonts: ^6.2.1
+  url_launcher: ^6.2.6
+  model_viewer_plus: ^1.7.0
+  audioplayers: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +76,10 @@ flutter:
   assets:
     - assets/videos/
     - assets/images/
+    - assets/model.tflite
+    - assets/labels.txt
+    - assets/corte_carne.glb
+    - assets/audio/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
