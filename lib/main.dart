@@ -367,78 +367,69 @@ class MenuRutaCard extends StatelessWidget {
 }
 
 // --- TARJETA PRINCIPAL DEL POZO ---
-// --- TARJETA PRINCIPAL DEL POZO ---
+// --- TARJETA PRINCIPAL DEL POZO (DISEÑO CLEAN UI / MINIMALISTA) ---
 class DetallePozoCard extends StatelessWidget {
   final PuntoHistorico punto;
   final VoidCallback onBack;
 
   const DetallePozoCard({super.key, required this.punto, required this.onBack});
 
-  // NUEVO: Estilo de botón Neumórfico/Soft UI (Basado en la imagen de referencia)
+  // --- NUEVO DISEÑO DE BOTÓN TIPO PÍLDORA FLOTANTE ---
   Widget _buildModernButton({required String text, required VoidCallback onPressed, bool isExpanded = false, Widget? expandedContent}) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: const Color(0xFF982B46), // Color principal Vino
-        borderRadius: BorderRadius.circular(30), // Bordes muy redondeados (Pill shape)
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFA8324E), Color(0xFF7A1831)], // Gradiente Vino Vibrante
+        ),
+        borderRadius: BorderRadius.circular(30), // Borde de píldora
         boxShadow: [
-          // Sombra suave abajo para dar altura
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
-            offset: const Offset(0, 8),
-            blurRadius: 15,
+            color: const Color(0xFF7A1831).withOpacity(0.35), // Sombra del mismo tono vino
+            offset: const Offset(0, 10),
+            blurRadius: 20,
           ),
-          // Brillo muy sutil arriba para el efecto 3D suave
           BoxShadow(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withOpacity(0.15), // Brillo superior
             offset: const Offset(0, -2),
             blurRadius: 4,
           ),
         ],
       ),
-      child: isExpanded
-          ? expandedContent
-          : Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(30),
-                onTap: onPressed,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        text,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: isExpanded
+            ? expandedContent
+            : Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onPressed,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          text,
+                          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8),
                         ),
-                      ),
-                      // El círculo interno con icono que se ve en tu referencia
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          shape: BoxShape.circle,
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
+                          child: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 14),
                         ),
-                        child: const Icon(
-                          Icons.arrow_forward,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
+      ),
     );
   }
 
-  // Helper para adaptar el ExpansionTile al nuevo diseño
+  // --- HELPER PARA LOS MENÚS DESPLEGABLES CON EL MISMO ESTILO ---
   Widget _buildModernExpansionTile(BuildContext context, {required String title, required List<Widget> children}) {
     return _buildModernButton(
       text: title,
@@ -447,28 +438,13 @@ class DetallePozoCard extends StatelessWidget {
       expandedContent: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
-          title: Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
-            ),
-          ),
+          title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8)),
           iconColor: Colors.white,
           collapsedIconColor: Colors.white,
           trailing: Container(
             padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.keyboard_arrow_down,
-              color: Colors.white,
-              size: 20,
-            ),
+            decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
+            child: const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 18),
           ),
           children: children,
         ),
@@ -487,7 +463,7 @@ class DetallePozoCard extends StatelessWidget {
             SizedBox(
               width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height * 0.7,
               child: ModelViewer(
-                src: punto.modelo3dUrl, alt: "Modelo 3D Pozo", ar: false, autoRotate: true,
+                src: punto.modelo3dUrl, alt: "Modelo 3D", ar: false, autoRotate: true,
                 cameraControls: true, backgroundColor: Colors.transparent, disableZoom: false,
                 cameraOrbit: "auto auto 200%", maxCameraOrbit: "auto auto 400%", minCameraOrbit: "auto auto 50%",
               ),
@@ -501,22 +477,11 @@ class DetallePozoCard extends StatelessWidget {
   }
 
   void _reproducirVideo(BuildContext context, List<VideoHistorico> listaVideos, int indexSeleccionado) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => PantallaVisorVideo(videos: listaVideos, indiceInicial: indexSeleccionado)),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => PantallaVisorVideo(videos: listaVideos, indiceInicial: indexSeleccionado)));
   }
 
   void _abrirVisorGaleria(BuildContext context, int indexInicial) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => VisorGaleria(
-          imagenes: punto.imagenesGaleria,
-          indiceInicial: indexInicial,
-        ),
-      ),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => VisorGaleria(imagenes: punto.imagenesGaleria, indiceInicial: indexInicial)));
   }
 
   @override
@@ -524,58 +489,56 @@ class DetallePozoCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(32),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15), 
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20), 
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.9, height: 650,
+          width: MediaQuery.of(context).size.width * 0.9, height: 680,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.9), 
+            color: Colors.white.withOpacity(0.95), // Blanco más puro para hacer contraste
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5)
+            border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 40, offset: const Offset(0, 20))],
           ),
           child: Column(
             children: [
-              // CABECERA
+              // CABECERA (Imagen Superior)
               Stack(
                 children: [
-                  Image.asset(punto.imagenCabecera, height: 180, width: double.infinity, fit: BoxFit.cover,
-                    errorBuilder: (c, o, s) => Container(height: 180, color: Colors.grey, child: const Center(child: Icon(Icons.image_not_supported, color: Colors.white, size: 50))),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                    child: Image.asset(punto.imagenCabecera, height: 220, width: double.infinity, fit: BoxFit.cover,
+                      errorBuilder: (c, o, s) => Container(height: 220, color: Colors.grey, child: const Center(child: Icon(Icons.image_not_supported, color: Colors.white, size: 50))),
+                    ),
                   ),
-                  Positioned(bottom: 0, left: 0, right: 0, child: Container(height: 80, decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black.withOpacity(0.9), Colors.transparent])))),
+                  Positioned(bottom: 0, left: 0, right: 0, child: Container(height: 100, decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black.withOpacity(0.8), Colors.transparent])))),
                   Positioned(
-                    bottom: 15, left: 20,
-                    child: Text(punto.nombre, style: GoogleFonts.montserrat(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+                    bottom: 20, left: 24, right: 24,
+                    child: Text(punto.nombre, style: GoogleFonts.poppins(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
                   ),
-                  Positioned(top: 15, left: 15, child: CircleAvatar(backgroundColor: Colors.black54, child: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: onBack)))
+                  Positioned(
+                    top: 15, left: 15, 
+                    child: CircleAvatar(
+                      backgroundColor: Colors.black.withOpacity(0.4), 
+                      child: IconButton(icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 18), onPressed: onBack)
+                    )
+                  )
                 ],
               ),
               
-              // CONTENIDO
+              // CONTENIDO BLANCO MINIMALISTA
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white, 
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 15, offset: const Offset(0, 5))]
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("Información", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.black87)),
-                            const SizedBox(height: 8),
-                            Text(punto.informacion, style: TextStyle(fontSize: 14, color: Colors.black87, fontWeight: FontWeight.w500, height: 1.4)),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 25),
+                      // SECCIÓN INFORMACIÓN (Sin fondo gris, estilo limpio como la imagen de referencia)
+                      const Text("Información", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Color(0xFF1E293B), letterSpacing: -0.5)),
+                      const SizedBox(height: 10),
+                      Text(punto.informacion, style: TextStyle(fontSize: 15, color: Colors.grey.shade600, fontWeight: FontWeight.w400, height: 1.6)),
+                      const SizedBox(height: 35),
 
-                      // SECCIÓN VIDEOS (Estilo Moderno)
+                      // SECCIÓN VIDEOS
                       _buildModernExpansionTile(
                         context,
                         title: "VIDEOS",
@@ -583,11 +546,11 @@ class DetallePozoCard extends StatelessWidget {
                           int index = entry.key;
                           VideoHistorico video = entry.value;
                           return Container(
-                            color: Colors.black.withOpacity(0.1), 
+                            color: Colors.black.withOpacity(0.12), 
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-                              leading: const Icon(Icons.play_circle_fill, color: Colors.white70, size: 28),
-                              title: Text(video.titulo, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                              leading: const Icon(Icons.play_circle_fill, color: Colors.white, size: 26),
+                              title: Text(video.titulo, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14)),
                               onTap: () => _reproducirVideo(context, punto.videos, index),
                             ),
                           );
@@ -595,37 +558,38 @@ class DetallePozoCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
 
-                      // BOTÓN VER EN 3D (Estilo Moderno)
+                      // BOTÓN VER EN 3D
                       _buildModernButton(
-                        text: "VER EN 3D",
+                        text: "VER MODELO 3D",
                         onPressed: () => _mostrarModelo3D(context),
                       ),
                       const SizedBox(height: 20),
 
-                      // SECCIÓN GALERÍA (Estilo Moderno)
+                      // SECCIÓN GALERÍA
                       _buildModernExpansionTile(
                         context,
-                        title: "GALERÍA",
+                        title: "GALERÍA DE FOTOS",
                         children: [
                           Container(
-                            color: Colors.black.withOpacity(0.1),
-                            padding: const EdgeInsets.all(15),
+                            color: Colors.black.withOpacity(0.12),
+                            padding: const EdgeInsets.symmetric(vertical: 20),
                             height: 200,
                             child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
                               scrollDirection: Axis.horizontal,
                               itemCount: punto.imagenesGaleria.length,
                               itemBuilder: (context, index) {
                                 return Padding(
-                                  padding: const EdgeInsets.only(right: 15),
+                                  padding: EdgeInsets.only(left: index == 0 ? 24 : 0, right: 16),
                                   child: GestureDetector(
                                     onTap: () => _abrirVisorGaleria(context, index),
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(16),
-                                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))]
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 5))]
                                       ),
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(20),
                                         child: Image.asset(
                                           punto.imagenesGaleria[index], 
                                           width: 220, 
