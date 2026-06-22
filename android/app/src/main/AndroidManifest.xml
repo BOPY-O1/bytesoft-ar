@@ -5,7 +5,7 @@
     
 
     <application
-        android:label="bytesoft"
+        android:label="ARtour PR"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
